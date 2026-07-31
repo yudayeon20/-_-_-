@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" role="img" aria-labelledby="title">
+  <title id="title">봄내틔움</title>
+  <defs>
+    <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#78c865"/>
+      <stop offset="1" stop-color="#2f9947"/>
+    </linearGradient>
+    <linearGradient id="leafB" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fd66f"/>
+      <stop offset="1" stop-color="#3fa353"/>
+    </linearGradient>
+    <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8a44b"/>
+      <stop offset="1" stop-color="#ac7132"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(7 5)">
+    <ellipse cx="46" cy="77" rx="31" ry="8" fill="#dff1d7"/>
+    <path d="M30 73c4-16 27-18 33 0z" fill="url(#soil)"/>
+    <path d="M46 69c0-17-1-31-7-43" fill="none" stroke="#3c9d4f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M43 45c-19 2-30-8-31-26 20-2 31 7 31 26z" fill="url(#leafA)"/>
+    <path d="M45 39c7-19 20-27 39-21-5 20-18 28-39 21z" fill="url(#leafB)"/>
+    <path d="M45 67c8-9 18-11 29-6-5 11-15 15-29 6z" fill="#61b75c"/>
+  </g>
+  <text x="101" y="66" fill="#279447" font-size="54" font-weight="800"
+        font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        letter-spacing="-3">봄내틔움</text>
+</svg>
