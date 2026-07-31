@@ -1,0 +1,139 @@
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+# .\.venv\Scripts\Activate.ps1
+
+data:
+  # 경로는 config.yaml 기준 상대경로다.
+  # 예전에는 "C:/chuncheon/data/..." 절대경로였는데, 그러면 윈도우 특정 폴더가
+  # 아니면 실행이 안 된다. 맥·리눅스 팀원이나 다른 경로에 클론한 사람이 못 돌린다.
+  # web/app.py 의 load_config() 가 TRANSIT_ROOT 기준으로 풀어 준다.
+
+  # 전체 왕복 정류장 목록과 누적예상시간이 들어 있는 CSV
+  route_stops_csv: "../data/chuncheon_bus_route_stops_latest.csv"
+
+  # 방향별 기점 출발시간 CSV
+  timetable_csv: "../data/춘천시_버스_출발_시간_데이터.csv"
+
+
+routing:
+  # 출발지·목적지 주변 정류장 검색 조건
+  max_stop_distance_m: 1000
+  max_stop_candidates: 10
+
+  # 최대 환승 횟수
+  max_transfers: 1
+
+  # 환승할 때 두 정류장 사이 최대 도보거리
+  max_transfer_walk_m: 150
+
+  # 순수 버스 탑승시간 제한
+  max_in_vehicle_minutes: 30
+
+  # 도보시간 및 환승 가능 여부 계산 기준
+  walking_speed_m_per_minute: 75
+  transfer_buffer_minutes: 2
+
+  # 도착시간 차이가 이 값 이내면 직통·도보·환승여유를 우선 비교
+  arrival_tie_minutes: 5
+
+  # 후보 경로 탐색량 제한
+  max_total_stop_count: 28
+  max_transfer_results: 100
+
+
+time:
+  # true: Asia/Seoul 기준 실제 현재시각 사용
+  # false: 아래 test_datetime 사용
+  use_current_time: true
+
+  # 테스트 시각 예시
+  test_datetime: "2026-07-24 18:14:23"
+
+  # 각 구간에서 출력할 다음 버스 수
+  upcoming_arrival_count: 2
+
+  # 지금 막 도착할 버스를 제외하고 싶으면 1~2분 설정
+  minimum_boarding_buffer_minutes: 0
+
+  # 평일인 법정공휴일에는 "휴일"로 수동 설정
+  # 평소에는 null
+  service_day_override: null
+
+
+output:
+  result_txt: "route_results_실시간도착예정시간.txt"
+
+  # 동일한 정류장 경로를 묶은 뒤 카테고리마다 표시할 경로 수
+  max_results_per_category: 6
+
+
+realtime:
+  # 춘천 TAGO 도시코드.
+  # 실제 호출 전 도시코드 목록 API로 한 번 확인하세요.
+  city_code: "32010"
+
+  # 인증키를 YAML에 직접 저장하지 않습니다.
+  # Windows PowerShell:
+  #   $env:DATA_GO_KR_SERVICE_KEY="발급받은_인증키"
+  service_key_env: "DATA_GO_KR_SERVICE_KEY"
+
+  # 정류소별 특정노선 도착예정정보 API에서 받을 개수
+  arrival_count: 2
+  num_of_rows: 20
+
+  # 실시간을 붙일 경로 수 상한.
+  #
+  # 100 으로 두면 안 된다. 실시간 보강이 '순위 매기기 전'에 일어나기 때문이다.
+  #   경로 후보 109개  →  앞 100개만 조회  →  이후 재정렬에서
+  #   조회 안 한 9개 중 하나가 1순위로 올라옴  →  화면 1순위에 실시간이 없음
+  #
+  # 상한을 올려도 API 호출량은 거의 안 는다. 호출 단위가 경로가 아니라
+  # 고유 (정류장, 노선) 쌍이고 클라이언트가 캐시하기 때문이다.
+  #   경로 109개 전부 조회 → 실제 호출 43회
+  #   경로 100개만  조회 → 실제 호출 34회   (9회 차이)
+  max_routes_to_enrich: 500
+
+  timeout_seconds: 8
+
+  # true이면 노선별 GPS 위치 API도 호출해
+  # 해당 노선에 GPS 위치목록이 제공되는지 보조 확인합니다.
+  # 도착예정시간 자체는 도착정보 API의 arrtime을 사용합니다.
+  verify_route_location: false
+
+
+  # -----------------------------------------------------------------
+# 직행 테스트용 좌표
+# -----------------------------------------------------------------
+# test:
+#   origin: # 춘천ICT벤처센터
+#     latitude: 37.8904306
+#     longitude: 127.741953
+
+#   destination: # 강원대학교 춘천캠퍼스
+#     latitude: 37.8689546
+#     longitude: 127.7450121
+
+
+# -----------------------------------------------------------------
+# 환승 테스트용 좌표
+# -----------------------------------------------------------------
+test:
+  origin: # 칠전대우2차아파트
+    latitude: 37.8407636
+    longitude: 127.7117165
+
+  destination: # 춘천바이오산업진흥원
+    latitude: 37.892294
+    longitude: 127.7435064
+
+
+# -----------------------------------------------------------------
+# 정류장까지 조금 걸어야 하는 경우
+# -----------------------------------------------------------------
+# test:
+#   origin: # 춘천시립 청소년도서관
+#     latitude: 37.8701432
+#     longitude: 127.7111836
+#
+#   destination: # 춘천바이오산업진흥원
+#     latitude: 37.892294
+#     longitude: 127.7435064
