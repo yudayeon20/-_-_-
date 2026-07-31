@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>봄내틔움 — 맞춤 프로그램 이동 안내</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <main>
+      <header class="topbar">
+        <a class="topbar-brand" href="#" aria-label="봄내틔움">
+          <img src="{{ url_for('static', filename='logo.svg') }}" alt="봄내틔움">
+        </a>
+        <button id="back-to-map" class="back-to-map" type="button">
+          <span class="back-icon" aria-hidden="true">←</span>
+          <span class="back-copy">
+            <strong>주변 프로그램 지도로 돌아가기</strong>
+            <small>다른 프로그램 둘러보기</small>
+          </span>
+        </button>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">PROGRAM ACCESS GUIDE</p>
+          <h1>내게 맞는 프로그램,<br><em>직접 참여할 수 있을까요?</em></h1>
+          <p>관심 프로그램을 찾았다면 버스로 30분 안에 갈 수 있는지 확인해보세요.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <span class="sun"></span>
+          <span class="hill hill-one"></span>
+          <span class="hill hill-two"></span>
+          <span class="bus">BUS</span>
+        </div>
+      </section>
+
+      <section class="search-card">
+        <div class="location-fields">
+          <label>
+            <span class="dot origin-dot"></span>
+            <span class="field-copy"><small>나의 출발 위치</small>
+              <select id="origin">
+                <option value="__current__" selected>📍 현재 위치</option>
+                {% for key, place in places.items() %}
+                <option value="{{ key }}" {% if key == 'chiljeon_daewoo' %}selected{% endif %}>{{ place.name }}</option>
+                {% endfor %}
+              </select>
+              <span id="geo-status" class="geo-status"></span>
+            </span>
+          </label>
+          <button id="swap" class="swap" aria-label="출발지와 도착지 바꾸기">⇅</button>
+          <label>
+            <span class="dot destination-dot"></span>
+            <span class="field-copy"><small>선택한 프로그램 장소</small>
+              <select id="destination">
+                {% for key, place in places.items() %}
+                <option value="{{ key }}" {% if key == 'bio_center' %}selected{% endif %}>{{ place.name }}</option>
+                {% endfor %}
+              </select>
+            </span>
+          </label>
+        </div>
+        <button id="search" class="search-button"><span>⌕</span> 참여 경로 확인</button>
+      </section>
+
+      <section id="results" class="results-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PROGRAM ACCESS</p>
+            <h2>이 프로그램에 갈 수 있는 경로</h2>
+          </div>
+          <p id="queried-at" class="queried-at"></p>
+        </div>
+
+        <div class="category-bar" role="tablist">
+          {% for key, label in categories.items() %}
+          <button data-category="{{ key }}" class="{% if loop.first %}active{% endif %}" role="tab">{{ label }}</button>
+          {% endfor %}
+        </div>
+
+        <div id="loading" class="loading-state">
+          <span class="loader"></span>
+          <strong>가장 좋은 버스 길을 찾고 있어요</strong>
+          <p>현재 시간표와 정류장 순서를 확인하고 있습니다.</p>
+        </div>
+        <div id="error" class="empty-state hidden"></div>
+        <div id="route-list" class="route-list hidden"></div>
+      </section>
+
+      <section id="guide" class="guide-grid">
+        <article><span>01</span><strong>참여 가능한 거리</strong><p>버스 탑승시간 30분 안에 갈 수 있는 프로그램 경로만 확인해요.</p></article>
+        <article><span>02</span><strong>현실적인 이동 안내</strong><p>출발 위치에서 정류장까지 걷는 시간도 함께 고려해요.</p></article>
+        <article><span>03</span><strong>배움까지 안전하게</strong><p>환승 이동과 여유시간을 확인해 프로그램에 늦지 않도록 도와줘요.</p></article>
+      </section>
+    </main>
+  </div>
+
+  <template id="route-template">
+    <article class="route-card">
+      <div class="route-accent"></div>
+      <div class="route-card-top">
+        <div class="route-title-wrap">
+          <span class="rank"></span>
+          <div><div class="total-time"></div><div class="route-type"></div></div>
+        </div>
+        <div class="arrival"><small>목적지 도착</small><strong></strong><span></span></div>
+      </div>
+      <div class="tags"></div>
+      <div class="walk-breakdown"></div>
+      <div class="journey"></div>
+      <div class="route-stats">
+        <span><small>버스 탑승</small><strong class="ride-time"></strong></span>
+        <span><small>총 도보</small><strong class="walk-distance"></strong></span>
+        <span><small>환승</small><strong class="transfer-count"></strong></span>
+      </div>
+    </article>
+  </template>
+
+  <dialog id="route-detail" class="route-detail">
+    <div class="sheet-handle"></div>
+    <button class="detail-close" aria-label="상세 경로 닫기">×</button>
+    <header class="detail-header">
+      <strong id="detail-total-time"></strong>
+      <span id="detail-arrival"></span>
+    </header>
+    <div id="detail-tags" class="tags"></div>
+    <div id="detail-timeline" class="detail-timeline"></div>
+  </dialog>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
