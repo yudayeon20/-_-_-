@@ -8,14 +8,14 @@ data:
   # web/app.py 의 load_config() 가 TRANSIT_ROOT 기준으로 풀어 준다.
 
   # 전체 왕복 정류장 목록과 누적예상시간이 들어 있는 CSV
-  route_stops_csv: "../data/chuncheon_bus_route_stops_latest.csv"
+  route_stops_csv: "data/chuncheon_bus_route_stops_latest.csv"
 
   # 방향별 기점 출발시간 CSV
   #
   # 파일명은 반드시 영문으로 둔다. 한글 파일명은 맥(NFD 자소분리)과
   # 리눅스(NFC 완성형)에서 서로 다른 바이트열이라, 맥에서 커밋한 파일을
   # Streamlit Cloud(리눅스)가 "파일을 찾을 수 없습니다"로 뱉는다.
-  timetable_csv: "../data/chuncheon_bus_departure_times.csv"
+  timetable_csv: "data/chuncheon_bus_departure_times.csv"
 
 
 routing:
